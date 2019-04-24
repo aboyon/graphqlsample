@@ -5,4 +5,6 @@ class User < ApplicationRecord
 
   validates_uniqueness_of :email
   validates_presence_of :email, :name
+
+  scope :search_name, ->(full_name) { where("name ilike ?", "%#{sanitize_sql_like(full_name)}%") }
 end
