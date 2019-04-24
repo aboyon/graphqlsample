@@ -1,24 +1,98 @@
-# README
+## Setting up the environment
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Application runs in a Docker container using [Ruby 2.5](https://hub.docker.com/_/ruby/). You can find more information about installed packages looking at the [Dockerfile](Dockerfile).
 
-Things you may want to cover:
+## Building the environment
 
-* Ruby version
+```
+docker-compose build
+```
+It will take a while _(as we need to download some packages and install them)_. You can verify if building suceeded by searching an output like this:
+```
+db uses an image, skipping
+redis uses an image, skipping
+Building graphqlrails_web
+Step 1/11 : FROM ruby:2.5
+ ---> 60c3a1518797
+Step 2/11 : MAINTAINER David Silveira <jdsilveira@gmail.com>
+....
+....
+Step 10/11 : EXPOSE 3000
+ ---> Using cache
+ ---> 3c77004cfac5
+Step 11/11 : CMD ["bash"]
+ ---> Using cache
+ ---> 075ae338b705
+Successfully built 075ae338b705
+Successfully tagged graphql-rails_graphqlrails_web:latest
+```
 
-* System dependencies
+## Verifiying Docker images
 
-* Configuration
+Just run `docker images` at your project path. The expected output may look like:
+```
+REPOSITORY                       TAG                   IMAGE ID            CREATED             SIZE
+graphql-rails_graphqlrails_web   latest                075ae338b705        25 hours ago        1.13GB
+```
 
-* Database creation
+## Setting up the app
 
-* Database initialization
+At this point, you already have built your container and have your images in place, ready to be used. So. next step is to setup the databases and start the application.
 
-* How to run the test suite
+### Setting up database
 
-* Services (job queues, cache servers, search engines, etc.)
+For development:
+```
+docker-compose run graphqlrails_web rake db:create db:migrate seed:migrate
+```
+For testing (Rspec)
+```
+docker-compose run graphqlrails_web rake db:create db:migrate seed:migrate RAILS_ENV=test
+```
+And then, run the specs:
+```
+docker-compose run graphqlrails_web bundle exec rspec spec
+```
 
-* Deployment instructions
+## Start the container
 
-* ...
+```
+docker-compose up
+```
+
+## Accessing the app
+
+- **Locally**: It's enough to visit [http://localhost:3000/graphiql](http://localhost:3000/graphiql).
+- Live demo: pending
+
+## Querying the app
+### Retrieve all the tasks
+```
+query {
+  tasks {
+    name
+    status
+  }
+}
+```
+
+### Retrieve only the completed
+```
+query {
+  tasks(status:"pending") {
+    name
+    status
+  }
+}
+```
+
+### Retrieve scoped to status and user
+```
+query {
+  tasks(status:"pending", userId:1) {
+    name
+    status
+  }
+}
+```
+
