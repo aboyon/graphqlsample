@@ -14,14 +14,7 @@ class Task < ApplicationRecord
 
   before_create :ensure_status
 
-  scope :pending, -> { where(:status => STATUS[:pending]) }
-  scope :in_progress, -> { where(:status => STATUS[:in_progress]) }
-  scope :completed, -> { where(:status => STATUS[:completed]) }
   scope :for_user, -> (user_id) { joins(:assignments).where("assignments.user_id = ?", user_id) }
-
-  def assigned_to
-    assignments.order('created_at DESC').first.user
-  end
 
   private
 

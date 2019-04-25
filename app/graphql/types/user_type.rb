@@ -1,6 +1,5 @@
 class Types::UserType < Types::BaseObject
   description "A system user"
-  graphql_name "User"
 
   field :id, ID, :null => false
   field :name, String, :null => false, :description => "User's full name"

@@ -7,6 +7,8 @@ class Project < ApplicationRecord
 
   before_create :sanitize_key
 
+  scope :search_name, ->(project_name) { where("name ilike ?", "%#{sanitize_sql_like(project_name)}%") }
+
   private
 
     def sanitize_key
