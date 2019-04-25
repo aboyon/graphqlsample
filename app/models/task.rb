@@ -3,13 +3,14 @@ class Task < ApplicationRecord
   has_many :assignments
   has_many :users, :through => :assignments
 
-  validates_presence_of :name
-
   STATUS = {
     :pending => 'pending',
     :in_progress => 'in_progress',
     :completed => 'completed'
   }.freeze
+
+  validates_presence_of :name, :status
+  validates_inclusion_of :status, :in => self::STATUS.values, :message => "%{value} is not a valid status"
 
   before_create :ensure_status
 

@@ -60,10 +60,11 @@ docker-compose run graphqlrails_web bundle exec rspec spec
 docker-compose up
 ```
 
-## Accessing the app
+## Miscellaneous
 
 - **Locally**: It's enough to visit [http://localhost:3000/graphiql](http://localhost:3000/graphiql).
-- Live demo: pending
+- Live demo: [https://graphqlsample.herokuapp.com/](https://graphqlsample.herokuapp.com/)
+- [GraphQL gem](https://graphql-ruby.org/)
 
 ## Querying the app
 ### Retrieve all the tasks
@@ -96,3 +97,51 @@ query {
 }
 ```
 
+## Mutations
+### Create a task
+```
+mutation {
+  createTask(input:{
+    name: "This is a new task",
+    projectId:2
+  }){
+    task{
+      name
+      status
+    }
+    errors
+  }
+}
+```
+
+### Update task status
+```
+mutation {
+  updateTask(input: {
+    id: 3,
+    status:"in_progress"
+  }) {
+    task {
+      name
+      status
+    }
+    errors
+  }
+}
+```
+
+### Trigger validations using invalid statuses
+```
+mutation {
+  updateTask(input: {
+    id: 3,
+    status:"invalid"
+  }) {
+    task {
+      name
+      status
+    }
+    errors
+  }
+}
+```
